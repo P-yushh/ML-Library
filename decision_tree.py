@@ -1,18 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[497]:
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from collections import Counter
-
-
-# In[540]:
-
-
 class decision_tree():
     
     def __init__(self, max_depth = 10, max_size = 5):
