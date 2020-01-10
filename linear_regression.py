@@ -27,10 +27,7 @@ class linear_reg:
                If you don't want cross-validation set then you need not provide its size!'''
         
         row, col = X.shape
-        if type(X) == pandas.core.frame.DataFrame:
-            X = X.to_numpy()
-        if type(Y) == pandas.core.frame.DataFrame:
-            Y = Y.to_numpy()
+
         # Shuffling the Input data!
 
         np.random.seed(random_state)
@@ -82,10 +79,6 @@ class linear_reg:
     def train(self, X_train, Y_train):
         ''' Train the model by providing training input and training labels respectively!'''
         
-        if type(X_train) == pandas.core.frame.DataFrame:
-            X_train = X_train.to_numpy()
-        if type(Y_train) == pandas.core.frame.DataFrame:
-            Y_train = Y_train.to_numpy()
         self.no_of_example, no_of_feature = X_train.shape
 
         # Initializing constant and weight!
@@ -120,8 +113,6 @@ class linear_reg:
                 change the value of limit parameter in which case it will alter the accuracy of the predicted output!
                 It has already been optimised for the best possible outcome!'''
         
-        if type(X_test) == pandas.core.frame.DataFrame:
-            X_test = X_test.to_numpy()
         Y_pred = np.dot(X_test, self.weight) + self.const
         Y_pred = self.threshold(Y_pred, limit)
         return Y_pred
