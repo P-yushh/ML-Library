@@ -40,7 +40,24 @@ class logistic_reg():
         cost = ( -1*sum( Y*np.log(y_pred) + (1-Y)*np.log(1-y_pred) ) )/self.no_of_example
         return cost
     
-    def train(self, X_train, Y_train):
+    def mini_batches(self, X, Y, batch_size):
+        
+        #Making mini batches!
+        
+      np.random.seed(1)
+      np.random.shuffle(X)
+      np.random.seed(1)
+      np.random.shuffle(Y)
+      indices = np.arange(X.shape[0])
+      for ind in range(0, X.shape[0], batch_size):
+        last_ind = min(ind + batch_size, X.shape[0])
+        index = indices[ind:last_ind]
+        yield X[index], Y[index]
+        
+    def train(self, X_train, Y_train, batch_size = 50):
+        ''' This method trains the algorithm on the given dataset!
+            It takes parameters as training input and training output labels and batch size(optional).'''
+        
         self.no_of_example, no_of_feature = X_train.shape
         
         # Initializing constant and weight to be passed as a parameter to 'sigmoid()'!
@@ -56,30 +73,30 @@ class logistic_reg():
         
         # Applying Gradient Descent.
         
-        for i in range(self.no_of_iteration):        
-            z = self.const + np.dot(X_train, self.weight)
+        for i in range(self.no_of_iteration): 
+          for batches in self.mini_batches(X_train, Y, batch_size):
+            x_train, y_train = batches       
+            z = self.const + np.dot(x_train, self.weight)
             y_pred = self.sigmoid(z)
             
             # Calculating gradients with respect to constant and weights.
             
-            dc = sum(y_pred - Y)
-            dw = np.dot(X_train.T, (y_pred - Y))
+            dc = sum(y_pred - y_train)
+            dw = np.dot(x_train.T, (y_pred - y_train))
             
             # Updating parameters.
             
             self.const -= (self.learning_rate / self.no_of_example)*dc
             self.weight -= (self.learning_rate / self.no_of_example)*dw   
-            self.cst[i] = self.cost_func(y_pred, Y_train)    
-            
-    def predict(self, X_test, Y_test):
+            self.cst[i] = self.cost_func(y_pred, y_train)  
+        
+       def predict(self, X_test):
+        '''This method predicts the output label as 1 if this is the concerned class else 0!'''
         
         # This function predicts the output corresponding to the given test data.
         
-        sz = len(Y_test)
         z = self.const + np.dot(X_test, self.weight)
         pred = self.sigmoid(z)
-        Y = [1 if Y_test[i] == self.concerned_class else 0 for i in range(sz)]
-        Y = np.array(Y)
         
         # Predict the class as positive class if 'pred' gives a value greater than '0.5',
         # else predict the class as negative class!
@@ -115,17 +132,3 @@ class logistic_reg():
         plt.ylabel('Cost Entropy Loss')
         plt.legend(title = 'Classes', fancybox = True, shadow = True, ncol = 2, borderpad = 1)
         plt.show
-
-training_data = pd.read_csv("sample_data/mnist_train_small.csv")
-testing_data = pd.read_csv("sample_data/mnist_test.csv")
-testing_data.head()
-xtrain = training_data.values[:,1:]
-ytrain = training_data.values[:,0]
-xtest = testing_data.values[:,1:]
-ytest = testing_data.values[:,0]
-for i in range(10):
-  reg = logistic_reg(concerned_class = i)
-  reg.train(xtrain, ytrain)
-  acc = reg.accuracy(xtest, ytest)
-  print("Accuracy of prediction for ' Class = ", i, "' is :", acc, "%")
-  reg.learning_curve()
