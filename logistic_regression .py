@@ -90,7 +90,7 @@ class logistic_reg():
             self.weight -= (self.learning_rate / self.no_of_example)*dw   
             self.cst[i] = self.cost_func(y_pred, y_train)  
         
-       def predict(self, X_test):
+    def predict(self, X_test):
         '''This method predicts the output label as 1 if this is the concerned class else 0!'''
         
         # This function predicts the output corresponding to the given test data.
