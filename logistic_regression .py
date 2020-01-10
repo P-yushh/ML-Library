@@ -111,7 +111,7 @@ class logistic_reg():
         
         sz = len(Y_test)
         sum = 0
-        Y_pred = self.predict(X_test, Y_test)
+        Y_pred = self.predict(X_test)
         Y = [1 if Y_test[i] == self.concerned_class else 0  for i in range(sz)]
         Y = np.array(Y)
         for i in range(sz):
