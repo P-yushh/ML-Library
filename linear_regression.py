@@ -25,6 +25,7 @@ class linear_reg:
     def data_split(self, X, Y, test_size = 0.2, cross_validation_size = 0.0, random_state = 1):
         ''' This method can split your data into train, test and cross-validation data according to the input size provided!
                If you don't want cross-validation set then you need not provide its size!'''
+        
         row, col = X.shape
         if type(X) == pandas.core.frame.DataFrame:
             X = X.to_numpy()
@@ -63,9 +64,24 @@ class linear_reg:
             return xtrain, xtest, ytrain, ytest
         else:
             return xtrain, xtest, xvalidation, ytrain, ytest, yvalidation    
-
+    
+    def mini_batches(self, X, Y, batch_size):
+        
+        # Making mini batches!
+        
+      np.random.seed(1)
+      np.random.shuffle(X)
+      np.random.seed(1)
+      np.random.shuffle(Y)
+      indices = np.arange(X.shape[0])
+      for ind in range(0, X.shape[0], batch_size):
+        last_ind = min(ind + batch_size, X.shape[0])
+        index = indices[ind:last_ind]
+        yield X[index], Y[index]
+        
     def train(self, X_train, Y_train):
         ''' Train the model by providing training input and training labels respectively!'''
+        
         if type(X_train) == pandas.core.frame.DataFrame:
             X_train = X_train.to_numpy()
         if type(Y_train) == pandas.core.frame.DataFrame:
@@ -84,18 +100,20 @@ class linear_reg:
         # Applying Gradient Descent!
         
         for i in range(self.no_of_iteration):
-            y_pred = np.dot(X_train, self.weight) + self.const
+          for batches in self.mini_batches(X_train, Y_train, batch_size):
+            x_train, y_train = batches
+            y_pred = np.dot(x_train, self.weight) + self.const
             
             # Calculating gradients with respect to constant and weights.
 
-            dw = (1/self.no_of_example)*np.dot(X_train.T, (y_pred - Y_train))
-            dc = (1/self.no_of_example)*np.sum((y_pred -  Y_train))
+            dw = (1/self.no_of_example)*np.dot(x_train.T, (y_pred - y_train))
+            dc = (1/self.no_of_example)*np.sum((y_pred -  y_train))
 
             # Updating parameters.
 
             self.weight -= self.learning_rate*dw
             self.const -= self.learning_rate*dc
-            self.mse[i] = self.cost_func(y_pred, Y_train) 
+            self.mse[i] = self.cost_func(y_pred, y_train) 
                   
     def predict(self, X_test, limit = 0.9):
         ''' This method predicts the output for the given input and takes input data as parameter, you can also choose to give
