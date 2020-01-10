@@ -23,8 +23,13 @@ class linear_reg:
         self.mse = 0
     
     def data_split(self, X, Y, test_size = 0.2, cross_validation_size = 0.0, random_state = 1):
+        ''' This method can split your data into train, test and cross-validation data according to the input size provided!
+               If you don't want cross-validation set then you need not provide its size!'''
         row, col = X.shape
-
+        if type(X) == pandas.core.frame.DataFrame:
+            X = X.to_numpy()
+        if type(Y) == pandas.core.frame.DataFrame:
+            Y = Y.to_numpy()
         # Shuffling the Input data!
 
         np.random.seed(random_state)
@@ -60,6 +65,11 @@ class linear_reg:
             return xtrain, xtest, xvalidation, ytrain, ytest, yvalidation    
 
     def train(self, X_train, Y_train):
+        ''' Train the model by providing training input and training labels respectively!'''
+        if type(X_train) == pandas.core.frame.DataFrame:
+            X_train = X_train.to_numpy()
+        if type(Y_train) == pandas.core.frame.DataFrame:
+            Y_train = Y_train.to_numpy()
         self.no_of_example, no_of_feature = X_train.shape
 
         # Initializing constant and weight!
@@ -88,6 +98,12 @@ class linear_reg:
             self.mse[i] = self.cost_func(y_pred, Y_train) 
                   
     def predict(self, X_test, limit = 0.9):
+        ''' This method predicts the output for the given input and takes input data as parameter, you can also choose to give
+                change the value of limit parameter in which case it will alter the accuracy of the predicted output!
+                It has already been optimised for the best possible outcome!'''
+        
+        if type(X_test) == pandas.core.frame.DataFrame:
+            X_test = X_test.to_numpy()
         Y_pred = np.dot(X_test, self.weight) + self.const
         Y_pred = self.threshold(Y_pred, limit)
         return Y_pred
@@ -136,24 +152,10 @@ class linear_reg:
             plt.show()
     
     def plot(self, X_test, Y_test):
+        ''' This method can plot given data Vs. real output and predicted output provided there are two features in the given input!''' 
             Y_pred = self.predict(X_test)
             plt.scatter(X_test, Y_test)
             plt.plot(X_test, Y_pred, color = 'red')
             plt.xlabel('Test data')
             plt.ylabel('Predicted Output')
             plt.show()
-
-train_data=pd.read_csv("sample_data/mnist_train_small.csv")
-test_data = pd.read_csv("sample_data/mnist_test.csv")
-test_data.head(10)
-Y1 = train_data.values[:,0]
-X1 = train_data.values[:,1:]
-Y2 = test_data.values[:,0]
-X2 = test_data.values[:,1:]
-
-lr = linear_reg()
-lr.train(X1, Y1)
-pred = lr.predict(X2)
-acc = lr.accuracy(pred, Y2)
-print("Accuracy is: ", acc)
-lr.learning_curve()
