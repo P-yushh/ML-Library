@@ -12,7 +12,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 class k_means():
-     
+    
+     ''' Just call the predict() method while giving providing the dataset for clustering'''
+        
     def __init__(self, k = 3, no_of_iteration = 1000, random_state = 10):
         self.k = k
         self.no_of_iteration = no_of_iteration
@@ -80,16 +82,9 @@ class k_means():
         self.labels = self.label(self.clusters)
         return self.labels
     
-    def accuracy(self, Y):
-        count = 0
-        for i in range(len(Y)):
-            if Y[i] == self.labels[i]:
-                count += 1
-        return (count / len(Y)) * 100
-    
     def plot(self):
         
-        # If 2 features are given then clusters can be visualized with this function!
+        ''' If 2 features are given then clusters can be visualized with this function! '''
 
         figure, ax = plt.subplots(figsize = (12,8))
         for i, index in enumerate(self.clusters):
@@ -98,15 +93,3 @@ class k_means():
         for point in self.dynamic_centroid:
             ax.scatter(*point, marker = 'X', color = "black", linewidth = 2)
         plt.show()
-
-train_data=pd.read_csv("sample_data/mnist_train_small.csv")
-test_data = pd.read_csv("sample_data/mnist_test.csv")
-test_data.head(10)
-X_train = train_data.values[:,1:]
-Y_train = train_data.values[:,0]
-X_test = test_data.values[:,1:]
-Y_test = test_data.values[:,0]
-cluster = len(np.unique(Y_train))
-k = k_means(k = cluster)
-y_pred = k.predict(X_train)
-print("Accuracy is: ", k.accuracy(Y_train), "%")
