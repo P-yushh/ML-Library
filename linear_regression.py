@@ -171,9 +171,9 @@ class linear_reg:
     
     def plot(self, X_test, Y_test):
         ''' This method can plot given data Vs. real output and predicted output provided there are two features in the given input!''' 
-            Y_pred = self.predict(X_test)
-            plt.scatter(X_test, Y_test)
-            plt.plot(X_test, Y_pred, color = 'red')
-            plt.xlabel('Test data')
-            plt.ylabel('Predicted Output')
-            plt.show()
+        Y_pred = self.predict(X_test)
+        plt.scatter(X_test, Y_test)
+        plt.plot(X_test, Y_pred, color = 'red')
+        plt.xlabel('Test data')
+        plt.ylabel('Predicted Output')
+        plt.show()
